@@ -55,6 +55,8 @@ $('.search-form form').submit(function(){
 		'username',
 		'nama',
 		'email',
+		'telepon',
+		'status',
 		array(
 			'class'=>'CButtonColumn',
 		),

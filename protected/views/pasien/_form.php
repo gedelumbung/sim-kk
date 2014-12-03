@@ -51,12 +51,6 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'diskon'); ?>
-		<?php echo $form->textField($model,'diskon',array('size'=>5,'maxlength'=>5, 'class'=>'input-block-level')); ?>
-		<?php echo $form->error($model,'diskon'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'member'); ?>
         <?php echo $form->dropDownList($model,'member',array("Ya"=>"Ya","Tidak"=>"Tidak")); ?>
 		<?php echo $form->error($model,'member'); ?>

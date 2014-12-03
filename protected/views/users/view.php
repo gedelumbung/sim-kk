@@ -31,6 +31,8 @@ $this->menu=array(
 		'username',
 		'nama',
 		'email',
+		'status',
+		'telepon',
 	),
 )); ?>
 

@@ -55,6 +55,7 @@ $('.search-form form').submit(function(){
 	      'value'=>'$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 	      ),
 		'Pasien.nama',
+		'Perawatan.nama_perawatan',
 		'created_at',
 		'total_bayar',
 		'status_pembayaran',

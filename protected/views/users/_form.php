@@ -51,6 +51,18 @@
 		<?php echo $form->error($model,'email'); ?>
 	</div>
 
+	<div class="row">
+		<?php echo $form->labelEx($model,'telepon'); ?>
+		<?php echo $form->textField($model,'telepon',array('size'=>60,'maxlength'=>30, 'class'=>'input-block-level')); ?>
+		<?php echo $form->error($model,'telepon'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'status'); ?>
+        <?php echo $form->dropDownList($model,'status',array("admin"=>"Admin","kasir"=>"Kasir","owner"=>"Owner")); ?>
+		<?php echo $form->error($model,'status'); ?>
+	</div>
+
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'btn btn-sm btn-primary')); ?>
 	</div>

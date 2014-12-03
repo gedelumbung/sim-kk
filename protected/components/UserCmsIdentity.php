@@ -13,8 +13,6 @@
 			$this->setState('username', $user->username);				
 			$this->setState('email', $user->email);						
 			$this->setState('status', $user->status);		
-			$this->setState('status_user', "user_cms");			
-			$this->setState('route_admin', "cms");			
 			$this->errorCode=self::ERROR_NONE;
 		}		
 		return $this->errorCode==self::ERROR_NONE;	

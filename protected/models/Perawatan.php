@@ -1,22 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "tbl_transaksi_dokter".
+ * This is the model class for table "tbl_perawatan".
  *
- * The followings are the available columns in table 'tbl_transaksi_dokter':
- * @property integer $id_transaksi_dokter
- * @property integer $id_master_transaksi
- * @property integer $id_dokter
+ * The followings are the available columns in table 'tbl_perawatan':
+ * @property integer $id_perawatan
+ * @property string $nama_perawatan
+ * @property integer $harga
+ * @property string $diskon_member
+ * @property string $diskon_umum
+ * @property integer $komisi_dokter
+ * @property integer $komisi_perawat
  * @property string $created_at
+ * @property string $updated_at
  */
-class TransaksiDokter extends CActiveRecord
+class Perawatan extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'tbl_transaksi_dokter';
+		return 'tbl_perawatan';
 	}
 
 	/**
@@ -27,12 +32,14 @@ class TransaksiDokter extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_master_transaksi, id_dokter, created_at', 'required'),
-			array('id_master_transaksi, id_dokter', 'numerical', 'integerOnly'=>true),
-			array('created_at', 'length', 'max'=>100),
+			array('nama_perawatan, harga, diskon_member, diskon_umum, komisi_dokter, komisi_perawat', 'required'),
+			array('harga, komisi_dokter, komisi_perawat', 'numerical', 'integerOnly'=>true),
+			array('nama_perawatan', 'length', 'max'=>150),
+			array('diskon_member, diskon_umum', 'length', 'max'=>5),
+			array('created_at, updated_at', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id_transaksi_dokter, id_master_transaksi, id_dokter, created_at', 'safe', 'on'=>'search'),
+			array('id_perawatan, nama_perawatan, harga, diskon_member, diskon_umum, komisi_dokter, komisi_perawat, created_at, updated_at', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -41,10 +48,10 @@ class TransaksiDokter extends CActiveRecord
 	 */
 	public function relations()
 	{
+		// NOTE: you may need to adjust the relation name and the related
+		// class name for the relations automatically generated below.
 		return array(
-			'Dokter'=>array(self::BELONGS_TO,'Dokter','id_dokter'),
-			'MasterTransaksi'=>array(self::BELONGS_TO,'MasterTransaksi','id_master_transaksi'),
-			);
+		);
 	}
 
 	/**
@@ -53,10 +60,13 @@ class TransaksiDokter extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id_transaksi_dokter' => 'Id Transaksi Dokter',
-			'id_master_transaksi' => 'Id Master Transaksi',
-			'id_dokter' => 'Id Dokter',
+			'id_perawatan' => 'Id Perawatan',
+			'nama_perawatan' => 'Nama Perawatan',
+			'harga' => 'Harga',
+			'komisi_dokter' => 'Komisi Dokter',
+			'komisi_perawat' => 'Komisi Perawat',
 			'created_at' => 'Created At',
+			'updated_at' => 'Updated At',
 		);
 	}
 
@@ -78,10 +88,13 @@ class TransaksiDokter extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id_transaksi_dokter',$this->id_transaksi_dokter);
-		$criteria->compare('id_master_transaksi',$this->id_master_transaksi);
-		$criteria->compare('id_dokter',$this->id_dokter);
-		$criteria->compare('created_at',$this->created_at,true);
+		$criteria->compare('id_perawatan',$this->id_perawatan);
+		$criteria->compare('nama_perawatan',$this->nama_perawatan,true);
+		$criteria->compare('harga',$this->harga);
+		$criteria->compare('diskon_member',$this->diskon_member,true);
+		$criteria->compare('diskon_umum',$this->diskon_umum,true);
+		$criteria->compare('komisi_dokter',$this->komisi_dokter);
+		$criteria->compare('komisi_perawat',$this->komisi_perawat);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -92,7 +105,7 @@ class TransaksiDokter extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return TransaksiDokter the static model class
+	 * @return Perawatan the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

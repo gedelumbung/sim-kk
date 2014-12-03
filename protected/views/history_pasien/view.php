@@ -29,6 +29,7 @@ $this->menu=array(
 	'attributes'=>array(
 		'id_master_transaksi',
 		'Pasien.nama',
+		'Perawatan.nama_perawatan',
 		'created_at',
 		'updated_at',
 		'keterangan',

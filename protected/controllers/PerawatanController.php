@@ -1,21 +1,12 @@
 <?php
 
-class BarangController extends Controller
+class PerawatanController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='main';
-
-	public function init()
-	{
-		if (Yii::app()->user->isGuest) 
-		{
-			$this->redirect(array("site/login"));
-		}
-		$this->widget('SetConfig');
-	}
+	public $layout='//layouts/main';
 
 	/**
 	 * @return array action filters
@@ -37,7 +28,7 @@ class BarangController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view', 'get_detail'),
+				'actions'=>array('index','view','get_detail'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -68,10 +59,25 @@ class BarangController extends Controller
 	public function actionGet_Detail($id)
 	{
 		$model = $this->loadModel($id);
-		$data['id_barang'] = $model->id_barang;
-		$data['nama_barang'] = $model->nama_barang;
-		$data['harga_jual'] = $model->harga_jual-(($model->harga_jual*$model->diskon)/100);
-		$data['diskon'] = $model->diskon;
+
+		$member = Yii::app()->request->getParam('member');
+
+		if($member === 'true'){
+			$data['diskon'] = $model->diskon_umum;
+		}
+		else{
+			if($model->diskon_umum > $model->diskon_member){
+				$data['diskon'] = $model->diskon_umum;
+			}
+			else{
+				$data['diskon'] = $model->diskon_member;
+			}
+		}
+
+		$data['id'] = $model->id_perawatan;
+		$data['harga'] = $model->harga - ($model->harga/100*$data['diskon']);
+		$data['komisi_dokter'] = $model->komisi_dokter;
+		$data['komisi_perawat'] = $model->komisi_perawat;
 
 		echo json_encode($data,true);
 	}
@@ -82,19 +88,18 @@ class BarangController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Barang;
+		$model=new Perawatan;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Barang']))
+		if(isset($_POST['Perawatan']))
 		{
-			$model->attributes=$_POST['Barang'];
-			$model->keuntungan = ($_POST['Barang']['harga_jual']-$_POST['Barang']['harga_pokok'])-$_POST['Barang']['harga_jual']/100*$_POST['Barang']['diskon'];
+			$model->attributes=$_POST['Perawatan'];
 			$model->created_at = date('Y-m-d H:i:s');
 			$model->updated_at = date('Y-m-d H:i:s');
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id_barang));
+				$this->redirect(array('view','id'=>$model->id_perawatan));
 		}
 
 		$this->render('create',array(
@@ -114,13 +119,12 @@ class BarangController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Barang']))
+		if(isset($_POST['Perawatan']))
 		{
-			$model->attributes=$_POST['Barang'];
-			$model->keuntungan = ($_POST['Barang']['harga_jual']-$_POST['Barang']['harga_pokok'])-$_POST['Barang']['harga_jual']/100*$_POST['Barang']['diskon'];
+			$model->attributes=$_POST['Perawatan'];
 			$model->updated_at = date('Y-m-d H:i:s');
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id_barang));
+				$this->redirect(array('view','id'=>$model->id_perawatan));
 		}
 
 		$this->render('update',array(
@@ -147,10 +151,10 @@ class BarangController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new Barang('search');
+		$model=new Perawatan('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Barang']))
-			$model->attributes=$_GET['Barang'];
+		if(isset($_GET['Perawatan']))
+			$model->attributes=$_GET['Perawatan'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -162,10 +166,10 @@ class BarangController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Barang('search');
+		$model=new Perawatan('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Barang']))
-			$model->attributes=$_GET['Barang'];
+		if(isset($_GET['Perawatan']))
+			$model->attributes=$_GET['Perawatan'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -176,12 +180,12 @@ class BarangController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Barang the loaded model
+	 * @return Perawatan the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Barang::model()->findByPk($id);
+		$model=Perawatan::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -189,11 +193,11 @@ class BarangController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Barang $model the model to be validated
+	 * @param Perawatan $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='barang-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='perawatan-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

@@ -1,5 +1,5 @@
-app.controller('TransasksiCtrl', ['$scope','$http','barangService',
-    function($scope,$http,$barangService) {
+app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanService','pasienService',
+    function($scope,$http,$barangService,$perawatanService,$pasienService) {
         $scope.dokterCollection = [];
         $scope.perawatCollection = [];
         $scope.obatCollection = [];
@@ -7,7 +7,10 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService',
         $scope.totalBiaya = 0;
         $scope.totalBayar = 0;
         $scope.totalHutang = 0;
-        $scope.biaya = 0;
+        $scope.pasien = '';
+        $scope.queryStrPasien = '';
+        $scope.showPerawatan = false;
+        $scope.perawatan = '';
 
         $scope.statusPembayaran = 'Belum Lunas';
 
@@ -81,8 +84,24 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService',
             });
         };
 
+        $scope.updatePerawatan = function(id_perawatan, member){
+            $perawatanService.getEntity(id_perawatan, $scope.queryStrPasien).then(function(response) {
+                $scope.perawatan = response.data;
+                $scope.showPerawatan = true;
+                $scope.countTotal();
+            });
+        };
+
+        $scope.updatePasien = function(id_pasien){
+            $pasienService.getEntity(id_pasien).then(function(response) {
+                $scope.pasien = response.data;
+                $scope.queryStrPasien = 'member='+$scope.pasien.member;
+                $scope.updatePerawatan($scope.perawatan.id, $scope.pasien.member)
+            });
+        };
+
         $scope.countTotal = function(){
-            $scope.totalBiaya = parseInt($scope.totalBiayaObat)+parseInt($scope.biaya);
+            $scope.totalBiaya = parseInt($scope.totalBiayaObat)+parseInt($scope.perawatan.harga);
             $scope.countHutang();
         };
 
@@ -99,8 +118,8 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService',
     }
 ]);
 
-app.controller('TransasksiEditCtrl', ['$scope','$http','barangService',
-    function($scope,$http,$barangService) {
+app.controller('TransasksiEditCtrl', ['$scope','$http','barangService','perawatanService','pasienService',
+    function($scope,$http,$barangService,$perawatanService,$pasienService) {
         $scope.dokterCollection = arr_dokter;
         $scope.perawatCollection = arr_perawat;
         $scope.obatCollection = arr_obat;
@@ -114,6 +133,12 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService',
         $scope.totalBayar = $scope.model_detail.total_bayar;
 
         $scope.statusPembayaran = 'Belum Lunas';
+        $scope.pasien = '';
+        $scope.queryStrPasien = '';
+        $scope.showPerawatan = true;
+        $scope.perawatan = {
+            id : m_array.id_perawatan
+        };
 
 
         $scope.countTotalBiayaObat = function(){
@@ -185,8 +210,24 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService',
             });
         };
 
+        $scope.updatePasien = function(id_pasien){
+            $pasienService.getEntity(id_pasien).then(function(response) {
+                $scope.pasien = response.data;
+                $scope.queryStrPasien = 'member='+$scope.pasien.member;
+                $scope.updatePerawatan($scope.perawatan.id, $scope.pasien.member)
+            });
+        };
+
+        $scope.updatePerawatan = function(id_perawatan, member){
+            $perawatanService.getEntity(id_perawatan, $scope.queryStrPasien).then(function(response) {
+                $scope.perawatan = response.data;
+                $scope.showPerawatan = true;
+                $scope.countTotal();
+            });
+        };
+
         $scope.countTotal = function(){
-            $scope.totalBiaya = parseInt($scope.totalBiayaObat)+parseInt($scope.biaya);
+            $scope.totalBiaya = parseInt($scope.totalBiayaObat)+parseInt($scope.perawatan.harga);
             $scope.countHutang();
         };
 
@@ -203,5 +244,6 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService',
 
         $scope.countTotalBiayaObat();
         $scope.countTotal();
+        $scope.updatePasien(m_array.id_pasien);
     }
 ]);

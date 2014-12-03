@@ -33,7 +33,7 @@ class MasterTransaksi extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_pasien, created_at, updated_at, keterangan, biaya', 'required'),
+			array('id_pasien, created_at, updated_at, keterangan, biaya, id_perawatan', 'required'),
 			array('id_pasien, hutang, total, total_bayar, biaya', 'numerical', 'integerOnly'=>true),
 			array('created_at, updated_at', 'length', 'max'=>100),
 			array('status_pembayaran', 'length', 'max'=>20),
@@ -50,6 +50,7 @@ class MasterTransaksi extends CActiveRecord
 	{
 		return array(
 			'Pasien'=>array(self::BELONGS_TO,'Pasien','id_pasien'),
+			'Perawatan'=>array(self::BELONGS_TO,'Perawatan','id_perawatan'),
 			'TransaksiDokter'=>array(self::BELONGS_TO,'TransaksiDokter','id_master_transaksi'),
 			'TransaksiPerawat'=>array(self::BELONGS_TO,'TransaksiPerawat','id_master_transaksi'),
 			'TransaksiObat'=>array(self::BELONGS_TO,'TransaksiObat','id_master_transaksi'),
@@ -64,6 +65,7 @@ class MasterTransaksi extends CActiveRecord
 		return array(
 			'id_master_transaksi' => 'Id Master Transaksi',
 			'id_pasien' => 'Pasien',
+			'id_perawatan' => 'Jenis Perawatan',
 			'created_at' => 'Created At',
 			'updated_at' => 'Updated At',
 			'keterangan' => 'Keterangan',

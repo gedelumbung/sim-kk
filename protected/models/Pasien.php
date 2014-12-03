@@ -29,7 +29,7 @@ class Pasien extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nama, alamat, tempat_tanggal_lahir, no_telepon, member, diskon', 'required'),
+			array('nama, alamat, tempat_tanggal_lahir, no_telepon, member', 'required'),
 			array('nama', 'length', 'max'=>150),
 			array('tempat_tanggal_lahir, no_telepon', 'length', 'max'=>100),
 			// The following rule is used by search().
@@ -61,7 +61,6 @@ class Pasien extends CActiveRecord
 			'tempat_tanggal_lahir' => 'Tempat Tanggal Lahir',
 			'no_telepon' => 'No Telepon',
 			'created_at' => 'Created At',
-			'diskon' => 'Diskon',
 			'member' => 'Member',
 		);
 	}

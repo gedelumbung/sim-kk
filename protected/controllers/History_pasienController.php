@@ -235,6 +235,8 @@ class History_pasienController extends Controller
 		$fetch_detail['hutang'] = $model->hutang;
 		$fetch_detail['total'] = $model->total;
 		$fetch_detail['total_bayar'] = $model->total_bayar;
+		$fetch_detail['id_perawatan'] = $model->id_perawatan;
+		$fetch_detail['id_pasien'] = $model->id_pasien;
 
 		$this->render('update',array(
 			'model'=>$model,

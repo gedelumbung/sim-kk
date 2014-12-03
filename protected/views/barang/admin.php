@@ -60,6 +60,7 @@ $('.search-form form').submit(function(){
 		'harga_pokok',
 		'harga_jual',
 		'diskon',
+		'keuntungan',
 		array(
 			'class'=>'CButtonColumn',
 		),

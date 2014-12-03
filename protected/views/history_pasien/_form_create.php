@@ -33,6 +33,7 @@
 			   'name' => 'MasterTransaksi[id_pasien]', // input name
 			   'value' => $model->id_pasien, // selection
 			   'data' => array(''=>'Semua') + CHtml::listData(Pasien::model()->findAll(),'id_pasien','nama'),
+			   'htmlOptions' => array('ng-change' => 'updatePasien(id_pasien)', 'ng-model' => 'id_pasien')
 			));
 		?>
 		<?php echo $form->error($model,'id_pasien'); ?>
@@ -165,10 +166,36 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'biaya'); ?>
-		<?php echo $form->textField($model,'biaya', array('class'=>'input-block-level', 'ng-model'=>'biaya', 'ng-change'=>'countTotal()')); ?>
-		<?php echo $form->error($model,'biaya'); ?>
+		<?php echo $form->labelEx($model,'id_perawatan'); ?>
+		<?php echo $form->dropDownList($model,'id_perawatan',array(''=>'Semua') + CHtml::listData(Perawatan::model()->findAll(),'id_perawatan','nama_perawatan'), array('ng-change' => 'updatePerawatan(perawatan.id, isMember)', 'ng-model'=>'perawatan.id')); ?>
+		<?php echo $form->error($model,'id_perawatan'); ?>
 	</div>
+
+	<div class="row" ng-show="showPerawatan">
+		<div class="span6">
+			<label for="perawatan_harga">Biaya Perawatan</label>
+			<input type="text" id="perawatan_harga" readonly="true" ng-model="perawatan.harga">
+		</div>
+		
+		<div class="span6">
+			<label for="perawatan_diskon">Diskon Perawatan</label>
+			<input type="text" id="perawatan_diskon" readonly="true" ng-model="perawatan.diskon">
+		</div>
+	</div>
+
+	<div class="row" ng-show="showPerawatan">
+		<div class="span6">
+			<label for="perawatan_diskon_dokter">Komisi Dokter</label>
+			<input type="text" id="perawatan_diskon_dokter" readonly="true" ng-model="perawatan.komisi_dokter">
+		</div>
+		
+		<div class="span6">
+			<label for="perawatan_diskon_perawat">Komisi Perawat</label>
+			<input type="text" id="perawatan_diskon_perawat" readonly="true" ng-model="perawatan.komisi_perawat">
+		</div>
+	</div>
+
+	<br>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'total'); ?>

@@ -316,7 +316,9 @@ div.grid-view {
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/angular.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/module.angular.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/master.transaksi.js"></script>
-	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/barang.service.js  "></script>
+	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/barang.service.js"></script>
+	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/perawatan.service.js"></script>
+	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/pasien.service.js"></script>
 
 </head>
 
@@ -375,13 +377,16 @@ div.grid-view {
 				</li>
 
 				<li class='active'>
-					<a href="#"><i class="icon-th-large icon-white"></i><span>Master Data</span><span class="label">4</span></a>
+					<a href="#"><i class="icon-th-large icon-white"></i><span>Master Data</span><span class="label">5</span></a>
 					<ul class="subnav">
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/pasien"><i class="icon-th-list icon-white"></i><span> Data Pasien</span></a>
 						</li>
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/barang"><i class="icon-hdd icon-white"></i><span> Data Barang</span></a>
+						</li>
+						<li>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/perawatan"><i class="icon-list-alt icon-white"></i><span> Jenis Perawatan</span></a>
 						</li>
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/dokter"><i class="icon-asterisk icon-white"></i><span> Data Dokter</span></a>
@@ -399,7 +404,7 @@ div.grid-view {
 							<a href="<?php echo Yii::app()->baseUrl; ?>/history_pasien"><i class="icon-th-list icon-white"></i><span> History Pasien</span></a>
 						</li>
 						<li>
-							<a href="<?php echo Yii::app()->baseUrl; ?>/diskon"><i class="icon-th-list icon-white"></i><span> Diskon</span></a>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/history_pasien/create"><i class="icon-plus-sign icon-white"></i><span> Tambah Transaksi</span></a>
 						</li>
 					</ul>
 				</li>
