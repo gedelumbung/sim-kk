@@ -6,7 +6,20 @@ class PerawatanController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/main';
+	public $layout='main';
+
+	public function init()
+	{
+		if (Yii::app()->user->isGuest) 
+		{
+			$this->redirect(array("site/login"));
+		}
+		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
+		{
+			$this->redirect(array("dashboard/index"));
+		}
+		$this->widget('SetConfig');
+	}
 
 	/**
 	 * @return array action filters

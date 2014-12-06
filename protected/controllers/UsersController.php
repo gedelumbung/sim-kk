@@ -8,6 +8,10 @@ class UsersController extends Controller
 		{
 			$this->redirect(array("site/index"));
 		}
+		if (Yii::app()->user->status !== 'owner') 
+		{
+			$this->redirect(array("dashboard/index"));
+		}
 		$this->widget('SetConfig');
 	}
 

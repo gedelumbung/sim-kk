@@ -14,6 +14,10 @@ class History_pasienController extends Controller
 		{
 			$this->redirect(array("site/login"));
 		}
+		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'kasir') 
+		{
+			$this->redirect(array("dashboard/index"));
+		}
 		$this->widget('SetConfig');
 	}
 

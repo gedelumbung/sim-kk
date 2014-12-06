@@ -379,6 +379,18 @@ div.grid-view {
 				<li class='active'>
 					<a href="#"><i class="icon-th-large icon-white"></i><span>Master Data</span><span class="label">5</span></a>
 					<ul class="subnav">
+						<?php 
+							if(Yii::app()->user->status === 'kasir'){
+						?>
+						<li>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/pasien"><i class="icon-th-list icon-white"></i><span> Data Pasien</span></a>
+						</li>
+						<?php
+							}
+						?>
+						<?php 
+							if(Yii::app()->user->status === 'admin' || Yii::app()->user->status === 'owner'){
+						?>
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/pasien"><i class="icon-th-list icon-white"></i><span> Data Pasien</span></a>
 						</li>
@@ -394,9 +406,15 @@ div.grid-view {
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/perawat"><i class="icon-asterisk icon-white"></i><span> Data Perawat</span></a>
 						</li>
+						<?php
+							}
+						?>
 					</ul>
 				</li>
 
+				<?php 
+					if(Yii::app()->user->status === 'kasir' || Yii::app()->user->status === 'owner'){
+				?>
 				<li class='active'>
 					<a href="#"><i class="icon-briefcase icon-white"></i><span>Transaksi</span><span class="label">2</span></a>
 					<ul class="subnav">
@@ -408,13 +426,16 @@ div.grid-view {
 						</li>
 					</ul>
 				</li>
+				<?php
+					}
+				?>
 
+				<?php 
+					if(Yii::app()->user->status === 'owner'){
+				?>
 				<li class='active'>
 					<a href="#"><i class="icon-th icon-white"></i><span>Laporan</span><span class="label">4</span></a>
 					<ul class="subnav">
-						<li>
-							<a href="<?php echo Yii::app()->baseUrl; ?>/laporan_harian"><i class="icon-th-list icon-white"></i><span> Laporan Harian</span></a>
-						</li>
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/laporan_mingguan"><i class="icon-th-list icon-white"></i><span> Laporan Mingguan</span></a>
 						</li>
@@ -456,6 +477,9 @@ div.grid-view {
 						</li>
 					</ul>
 				</li>
+				<?php
+					}
+				?>
 
 			</ul>
 

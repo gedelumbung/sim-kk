@@ -10,6 +10,10 @@ class Grafik_kunjungan_bulananController extends Controller
 		{
 			$this->redirect(array("site/login"));
 		}
+		if (Yii::app()->user->status !== 'owner') 
+		{
+			$this->redirect(array("dashboard/index"));
+		}
 		$this->widget('SetConfig');
 	}
 
