@@ -3,19 +3,19 @@
 /* @var $model Barang */
 
 $this->breadcrumbs=array(
-	'Barang'=>array('index'),
+	'Barang Jual'=>array('index'),
 	$model->id_barang,
 );
 
 $this->menu=array(
-	array('label'=>'Data Barang', 'url'=>array('index')),
-	array('label'=>'Tambah Barang', 'url'=>array('create')),
-	array('label'=>'Edit Barang', 'url'=>array('update', 'id'=>$model->id_barang)),
-	array('label'=>'Hapus Barang', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id_barang),'confirm'=>'Are you sure you want to delete this item?')),
+	array('label'=>'Data Barang Jual', 'url'=>array('index')),
+	array('label'=>'Tambah Barang Jual', 'url'=>array('create')),
+	array('label'=>'Edit Barang Jual', 'url'=>array('update', 'id'=>$model->id_barang)),
+	array('label'=>'Hapus Barang Jual', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id_barang),'confirm'=>'Are you sure you want to delete this item?')),
 );
 ?>
 
-<h3>View Barang #<?php echo $model->id_barang; ?></h3>
+<h3>View Barang Jual #<?php echo $model->id_barang; ?></h3>
 
 <div class="portlet">
 <div class="portlet-decoration">

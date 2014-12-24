@@ -33,13 +33,13 @@ class MasterTransaksi extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_pasien, created_at, updated_at, keterangan, biaya, id_perawatan', 'required'),
+			array('id_pasien, created_at, updated_at, biaya', 'required'),
 			array('id_pasien, hutang, total, total_bayar, biaya', 'numerical', 'integerOnly'=>true),
 			array('created_at, updated_at', 'length', 'max'=>100),
 			array('status_pembayaran', 'length', 'max'=>20),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id_master_transaksi, id_pasien, created_at, updated_at, keterangan, hutang, total, total_bayar, status_pembayaran, nama_pasien', 'safe', 'on'=>'search'),
+			array('id_master_transaksi, id_pasien, created_at, updated_at, hutang, total, total_bayar, status_pembayaran, nama_pasien', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,10 +50,10 @@ class MasterTransaksi extends CActiveRecord
 	{
 		return array(
 			'Pasien'=>array(self::BELONGS_TO,'Pasien','id_pasien'),
-			'Perawatan'=>array(self::BELONGS_TO,'Perawatan','id_perawatan'),
 			'TransaksiDokter'=>array(self::BELONGS_TO,'TransaksiDokter','id_master_transaksi'),
 			'TransaksiPerawat'=>array(self::BELONGS_TO,'TransaksiPerawat','id_master_transaksi'),
 			'TransaksiObat'=>array(self::BELONGS_TO,'TransaksiObat','id_master_transaksi'),
+			'TransaksiPerawatan'=>array(self::BELONGS_TO,'TransaksiPerawatan','id_master_transaksi'),
 			);
 	}
 
@@ -65,7 +65,6 @@ class MasterTransaksi extends CActiveRecord
 		return array(
 			'id_master_transaksi' => 'Id Master Transaksi',
 			'id_pasien' => 'Pasien',
-			'id_perawatan' => 'Jenis Perawatan',
 			'created_at' => 'Created At',
 			'updated_at' => 'Updated At',
 			'keterangan' => 'Keterangan',
@@ -106,6 +105,31 @@ class MasterTransaksi extends CActiveRecord
 		$criteria->compare('hutang',$this->hutang);
 		$criteria->compare('total',$this->total);
 		$criteria->compare('total_bayar',$this->total_bayar);
+		if(!$this->status_pembayaran){
+			$criteria->compare('status_pembayaran',$this->status_pembayaran,true);
+		}
+		else{
+			$criteria->condition = 'status_pembayaran = "'.$this->status_pembayaran.'"';
+		}
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+
+	public function search_pasien($id_pasien)
+	{
+		// @todo Please modify the following code to remove attributes that should not be searched.
+
+		$criteria=new CDbCriteria;
+		
+		$criteria->with = array( 'Pasien' );
+		$criteria->compare( 'Pasien.nama', $this->nama_pasien, true );
+
+		$criteria->condition = "t.id_pasien = '".$id_pasien."'";
+
+		$criteria->compare('id_master_transaksi',$this->id_master_transaksi);
+		$criteria->compare('created_at',$this->created_at,true);
 		if(!$this->status_pembayaran){
 			$criteria->compare('status_pembayaran',$this->status_pembayaran,true);
 		}

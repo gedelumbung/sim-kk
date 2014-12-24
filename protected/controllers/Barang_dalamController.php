@@ -1,6 +1,6 @@
 <?php
 
-class PerawatanController extends Controller
+class Barang_dalamController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -37,7 +37,7 @@ class PerawatanController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','get_detail'),
+				'actions'=>array('index','view', 'get_detail'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -60,10 +60,6 @@ class PerawatanController extends Controller
 	 */
 	public function actionView($id)
 	{
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
@@ -72,25 +68,10 @@ class PerawatanController extends Controller
 	public function actionGet_Detail($id)
 	{
 		$model = $this->loadModel($id);
-
-		$member = Yii::app()->request->getParam('member');
-
-		if($member === 'true'){
-			$data['diskon'] = $model->diskon_umum;
-		}
-		else{
-			if($model->diskon_umum > $model->diskon_member){
-				$data['diskon'] = $model->diskon_umum;
-			}
-			else{
-				$data['diskon'] = $model->diskon_member;
-			}
-		}
-
-		$data['id'] = $model->id_perawatan;
-		$data['harga'] = $model->harga - ($model->harga/100*$data['diskon']);
-		$data['komisi_dokter'] = $model->komisi_dokter;
-		$data['komisi_perawat'] = $model->komisi_perawat;
+		$data['id_barang_dalam'] = $model->id_barang_dalam;
+		$data['nama_barang'] = $model->nama_barang;
+		$data['harga_jual'] = $model->harga_jual-(($model->harga_jual*$model->diskon)/100);
+		$data['diskon'] = $model->diskon;
 
 		echo json_encode($data,true);
 	}
@@ -101,22 +82,19 @@ class PerawatanController extends Controller
 	 */
 	public function actionCreate()
 	{
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
-		$model=new Perawatan;
+		$model=new BarangDalam;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Perawatan']))
+		if(isset($_POST['BarangDalam']))
 		{
-			$model->attributes=$_POST['Perawatan'];
+			$model->attributes=$_POST['BarangDalam'];
+			$model->keuntungan = ($_POST['BarangDalam']['harga_jual']-$_POST['BarangDalam']['harga_pokok'])-$_POST['BarangDalam']['harga_jual']/100*$_POST['BarangDalam']['diskon'];
 			$model->created_at = date('Y-m-d H:i:s');
 			$model->updated_at = date('Y-m-d H:i:s');
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id_perawatan));
+				$this->redirect(array('view','id'=>$model->id_barang_dalam));
 		}
 
 		$this->render('create',array(
@@ -131,21 +109,18 @@ class PerawatanController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Perawatan']))
+		if(isset($_POST['BarangDalam']))
 		{
-			$model->attributes=$_POST['Perawatan'];
+			$model->attributes=$_POST['BarangDalam'];
+			$model->keuntungan = ($_POST['BarangDalam']['harga_jual']-$_POST['BarangDalam']['harga_pokok'])-$_POST['BarangDalam']['harga_jual']/100*$_POST['BarangDalam']['diskon'];
 			$model->updated_at = date('Y-m-d H:i:s');
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id_perawatan));
+				$this->redirect(array('view','id'=>$model->id_barang_dalam));
 		}
 
 		$this->render('update',array(
@@ -160,10 +135,6 @@ class PerawatanController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -176,14 +147,10 @@ class PerawatanController extends Controller
 	 */
 	public function actionIndex()
 	{
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
-		$model=new Perawatan('search');
+		$model=new BarangDalam('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Perawatan']))
-			$model->attributes=$_GET['Perawatan'];
+		if(isset($_GET['BarangDalam']))
+			$model->attributes=$_GET['BarangDalam'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -195,14 +162,10 @@ class PerawatanController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'admin') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
-		$model=new Perawatan('search');
+		$model=new BarangDalam('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Perawatan']))
-			$model->attributes=$_GET['Perawatan'];
+		if(isset($_GET['BarangDalam']))
+			$model->attributes=$_GET['BarangDalam'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -213,12 +176,12 @@ class PerawatanController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Perawatan the loaded model
+	 * @return BarangDalam the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Perawatan::model()->findByPk($id);
+		$model=BarangDalam::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -226,11 +189,11 @@ class PerawatanController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Perawatan $model the model to be validated
+	 * @param BarangDalam $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='perawatan-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='barang-dalam-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

@@ -14,10 +14,6 @@ class PasienController extends Controller
 		{
 			$this->redirect(array("site/login"));
 		}
-		if (Yii::app()->user->status !== 'owner' && Yii::app()->user->status !== 'kasir') 
-		{
-			$this->redirect(array("dashboard/index"));
-		}
 		$this->widget('SetConfig');
 	}
 
@@ -46,11 +42,11 @@ class PasienController extends Controller
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
-				'users'=>array('@'),
+				'users'=>array('*'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'users'=>array('*'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

@@ -317,6 +317,7 @@ div.grid-view {
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/module.angular.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/master.transaksi.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/barang.service.js"></script>
+	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/barang.dalam.service.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/perawatan.service.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/pasien.service.js"></script>
 
@@ -395,7 +396,10 @@ div.grid-view {
 							<a href="<?php echo Yii::app()->baseUrl; ?>/pasien"><i class="icon-th-list icon-white"></i><span> Data Pasien</span></a>
 						</li>
 						<li>
-							<a href="<?php echo Yii::app()->baseUrl; ?>/barang"><i class="icon-hdd icon-white"></i><span> Data Barang</span></a>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/barang_dalam"><i class="icon-hdd icon-white"></i><span> Data Barang Dalam</span></a>
+						</li>
+						<li>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/barang"><i class="icon-hdd icon-white"></i><span> Data Barang Jual</span></a>
 						</li>
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/perawatan"><i class="icon-list-alt icon-white"></i><span> Jenis Perawatan</span></a>

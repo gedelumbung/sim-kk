@@ -37,12 +37,6 @@
 	<br>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'keterangan'); ?>
-		<?php echo $form->textArea($model,'keterangan',array('rows'=>6, 'cols'=>50, 'class'=>'input-block-level')); ?>
-		<?php echo $form->error($model,'keterangan'); ?>
-	</div>
-
-	<div class="row">
 		<label>Dokter</label>
 		<table class="table table-bordered">
 			<thead>
@@ -162,33 +156,84 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'id_perawatan'); ?>
-		<?php echo $form->dropDownList($model,'id_perawatan',array(''=>'Semua') + CHtml::listData(Perawatan::model()->findAll(),'id_perawatan','nama_perawatan'), array('ng-change' => 'updatePerawatan(perawatan.id, isMember)', 'ng-model'=>'perawatan.id')); ?>
-		<?php echo $form->error($model,'id_perawatan'); ?>
-	</div>
-
-	<div class="row" ng-show="showPerawatan">
-		<div class="span6">
-			<label for="perawatan_harga">Biaya Perawatan</label>
-			<input type="text" id="perawatan_harga" readonly="true" ng-model="perawatan.harga">
-		</div>
-		
-		<div class="span6">
-			<label for="perawatan_diskon">Diskon Perawatan</label>
-			<input type="text" id="perawatan_diskon" readonly="true" ng-model="perawatan.diskon">
-		</div>
-	</div>
-
-	<div class="row" ng-show="showPerawatan">
-		<div class="span6">
-			<label for="perawatan_diskon_dokter">Komisi Dokter</label>
-			<input type="text" id="perawatan_diskon_dokter" readonly="true" ng-model="perawatan.komisi_dokter">
-		</div>
-		
-		<div class="span6">
-			<label for="perawatan_diskon_perawat">Komisi Perawat</label>
-			<input type="text" id="perawatan_diskon_perawat" readonly="true" ng-model="perawatan.komisi_perawat">
-		</div>
+		<label>Perawatan</label>
+		<table class="table table-bordered">
+			<thead>
+				<th>No.</th>
+				<th>Nama Perawatan</th>
+				<th>Biaya</th>
+				<th>Diskon</th>
+				<th>Komisi Dokter</th>
+				<th>Komisi Perawat</th>
+				<th>Obat Dalam</th>
+				<th></th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="perawatan in perawatanCollection" ng-init="indexPerawatan=$index">
+					<td>{{$index+1}}</td>
+					<td width="30%">
+						<?php
+							$perawatan = Perawatan::model()->findAll();
+						?>
+						<select ng-change="updatePerawatan(perawatan.id, isMember, $index)" ng-model="perawatan.id">
+							<?php
+								for($i = 0; $i<count($perawatan); $i++){
+									echo '<option value="'.$perawatan[$i]['id_perawatan'].'">'.$perawatan[$i]['nama_perawatan'].' - Rp. '.number_format($perawatan[$i]['harga'],2,',','.').'</option>';
+								}
+							?>
+						</select>
+					</td>
+					<td>
+						{{perawatan.harga}}
+					</td>
+					<td>
+						{{perawatan.diskon}}
+					</td>
+					<td>
+						{{perawatan.komisi_dokter}}
+					</td>
+					<td>
+						{{perawatan.komisi_perawat}}
+					</td>
+					<td>
+						<table>
+							<tr ng-repeat="obatPerawatan in perawatan.obat">
+								<td>
+									<?php
+										$obat = BarangDalam::model()->findAll();
+									?>
+									<select ng-change="updateObatPerawatan(indexPerawatan,$index, obatPerawatan.id_obat, obatPerawatan.jumlah)" ng-model="obatPerawatan.id_obat">
+										
+										<?php
+											for($i = 0; $i<count($obat); $i++){
+												echo '<option value="'.$obat[$i]['id_barang_dalam'].'">'.$obat[$i]['nama_barang'].' - Rp. '.number_format($obat[$i]['harga_jual']-($obat[$i]['harga_jual']*$obat[$i]['diskon']/100),2,',','.').'</option>';
+											}
+										?>
+									</select>
+								</td>
+								<td>
+									<input type="text" style="width:50%" ng-model="obatPerawatan.jumlah" ng-change="updateObatPerawatan(indexPerawatan,$index, obatPerawatan.id_obat, obatPerawatan.jumlah)">
+								</td>
+								<td>
+									<span class="btn btn-small btn-warning pull-right" ng-click="deleteRowObatPerawatan(indexPerawatan,$index)">x</span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3"><span class="btn btn-small btn-warning pull-right" ng-click="addRowObatPerawatan($index)">+ Tambah Obat</span></td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<span class="btn btn-small btn-warning pull-right" ng-click="deleteRowPerawatan($index)">x</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5">{{totalBiayaObatPerawatan}}</td>
+					<td colspan="3"><span class="btn btn-small btn-warning pull-right" ng-click="addRowPerawatan()">Tambah Perawatan</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<input type="hidden" name="MasterTransaksi[perawatan]" value="{{perawatanCollection}}">
 	</div>
 
 	<br>
@@ -228,6 +273,7 @@
 	var arr_dokter = <?php echo json_encode($arr_dokter); ?>;
 	var arr_perawat = <?php echo json_encode($arr_perawat); ?>;
 	var arr_obat = <?php echo json_encode($arr_obat); ?>;
+	var arr_perawatan = <?php echo json_encode($arr_perawatan); ?>;
 	var m_array = <?php echo json_encode($m_array); ?>;
 </script>
 

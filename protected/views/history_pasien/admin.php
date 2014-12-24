@@ -55,10 +55,20 @@ $('.search-form form').submit(function(){
 	      'value'=>'$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 	      ),
 		'Pasien.nama',
-		'Perawatan.nama_perawatan',
 		'created_at',
 		'total_bayar',
 		'status_pembayaran',
+		array(
+			'class' => 'CButtonColumn',
+			'template' => ' {cetak}',
+			  'buttons'=>array
+			    (
+			        'cetak' => array
+			        (
+			            'url'=>'Yii::app()->createUrl("history_pasien/cetak", array("id"=>$data["id_master_transaksi"]))',
+			        ),
+			    ),
+		),
 		array(
 			'class'=>'CButtonColumn',
 		),

@@ -21,6 +21,7 @@ $this->menu=array(
 		'model'=>$model, 
 		'arr_dokter'=>$arr_dokter,
 		'arr_perawat'=>$arr_perawat,
+		'arr_perawatan'=>$arr_perawatan,
 		'arr_obat'=>$arr_obat,
 		'm_array'=>$m_array,
 	)

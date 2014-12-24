@@ -1,15 +1,15 @@
 <?php
-/* @var $this PasienController */
-/* @var $model Pasien */
+/* @var $this Barang_dalamController */
+/* @var $model BarangDalam */
 
 $this->breadcrumbs=array(
-	'Pasien'=>array('index'),
+	'Barang Dalam'=>array('index'),
 	'Manage',
 );
 
 $this->menu=array(
-	array('label'=>'Data Pasien', 'url'=>array('index')),
-	array('label'=>'Tambah Pasien', 'url'=>array('create')),
+	array('label'=>'Data Barang Dalam', 'url'=>array('index')),
+	array('label'=>'Tambah Barang Dalam', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -18,7 +18,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-	$('#pasien-grid').yiiGridView('update', {
+	$('#barang-dalam-grid').yiiGridView('update', {
 		data: $(this).serialize()
 	});
 	return false;
@@ -26,7 +26,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h3>Data Pasien</h3>
+<h3>Data Barang Dalam</h3>
 
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
@@ -37,15 +37,12 @@ $('.search-form form').submit(function(){
 <div class="portlet">
 <div class="portlet-decoration">
 <div class="portlet-title">
-<?php 
-	echo CHtml::link('<i class=\'icon icon-white icon-search\'></i> Advanced Search','#',array('class'=>'search-button btn btn-sm btn-primary')); 
-?>
-</div>
+<?php echo CHtml::link('<i class=\'icon icon-white icon-search\'></i> Advanced Search','#',array('class'=>'search-button btn btn-sm btn-primary')); ?></div>
 </div>
 <div class="portlet-content">
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'pasien-grid',
+	'id'=>'barang-dalam-grid',
 	'itemsCssClass'=>'table table-hover table-striped table-bordered table-condensed',
 	'dataProvider'=>$model->search(),
    'template'=>'{items}{pager}<br>{summary}',
@@ -55,21 +52,16 @@ $('.search-form form').submit(function(){
 	      'type'=>'raw',
 	      'value'=>'$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 	      ),
-		'nama',
-		'alamat',
-		'no_telepon',
-		'member',
-		array(
-			'class' => 'CButtonColumn',
-			'template' => ' {Detail Perawatan}',
-			  'buttons'=>array
-			    (
-			        'Detail Perawatan' => array
-			        (
-			            'url'=>'Yii::app()->createUrl("history_pasien/by_pasien", array("id"=>$data["id_pasien"]))',
-			        ),
-			    ),
-		),
+		'nama_barang',
+		'stok',
+		'harga_pokok',
+		'harga_jual',
+		'diskon',
+		/*
+		'keuntungan',
+		'created_at',
+		'updated_at',
+		*/
 		array(
 			'class'=>'CButtonColumn',
 		),

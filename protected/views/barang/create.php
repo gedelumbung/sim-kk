@@ -3,15 +3,15 @@
 /* @var $model Barang */
 
 $this->breadcrumbs=array(
-	'Barang'=>array('index'),
+	'Barang Jual'=>array('index'),
 	'Create',
 );
 
 $this->menu=array(
-	array('label'=>'Data Barang', 'url'=>array('index')),
+	array('label'=>'Data Barang Jual', 'url'=>array('index')),
 );
 ?>
 
-<h3>Create Barang</h3>
+<h3>Create Barang Jual</h3>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

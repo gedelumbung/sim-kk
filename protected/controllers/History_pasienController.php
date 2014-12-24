@@ -41,16 +41,16 @@ class History_pasienController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','cetak', 'by_pasien'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
-				'users'=>array('@'),
+				'users'=>array('*'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'users'=>array('*'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -69,6 +69,18 @@ class History_pasienController extends Controller
 			'dokter'	=>$this->loadModelDetailDokter($id),
 			'perawat'	=>$this->loadModelDetailPerawat($id),
 			'obat'		=>$this->loadModelDetailObat($id),
+			'perawatan'	=>$this->loadModelDetailPerawatan($id),
+		));
+	}
+
+	public function actionCetak($id)
+	{
+		$this->renderPartial('cetak',array(
+			'model'		=>$this->loadModel($id),
+			'dokter'	=>$this->loadModelDetailDokter($id),
+			'perawat'	=>$this->loadModelDetailPerawat($id),
+			'obat'		=>$this->loadModelDetailObat($id),
+			'perawatan'	=>$this->loadModelDetailPerawatan($id),
 		));
 	}
 
@@ -128,6 +140,34 @@ class History_pasienController extends Controller
 
 					//update stok barang
 					Yii::app()->db->createCommand("update tbl_barang set stok=stok-".$m_obat->jumlah." where id_barang='".$m_obat->id_obat."'")->execute();
+				}	
+
+				//save perawatan
+				$model_perawatan = json_decode($_POST['MasterTransaksi']['perawatan'],true);
+
+				for($a = 0; $a<count($model_perawatan); $a++){
+					$m_perawatan = new TransaksiPerawatan;
+					$m_perawatan->id_master_transaksi 	= $model->id_master_transaksi;
+					$m_perawatan->id_perawatan 			= $model_perawatan[$a]['id'];
+					$m_perawatan->created_at 			= date('Y-m-d H:i:s');
+
+					$m_perawatan->save();
+
+					$model_obat_perawatan = $model_perawatan[$a]['obat'];
+
+					for($b = 0; $b<count($model_obat_perawatan); $b++){
+						$m_obat_perawatan = new TransaksiObatDalam;
+						$m_obat_perawatan->id_transaksi_perawatan 	= $m_perawatan->id_transaksi_perawatan;
+						$m_obat_perawatan->id_obat 					= $model_obat_perawatan[$b]['id_obat'];
+						$m_obat_perawatan->jumlah 					= $model_obat_perawatan[$b]['jumlah'];
+						$m_obat_perawatan->created_at 				= date('Y-m-d H:i:s');
+
+						$m_obat_perawatan->save();
+					
+						//update stok barang
+						Yii::app()->db->createCommand("update tbl_barang_dalam set stok=stok-".$m_obat_perawatan->jumlah." where id_barang_dalam='".$m_obat_perawatan->id_obat."'")->execute();
+
+					}
 				}	
 
 				$this->redirect(array('view','id'=>$model->id_master_transaksi));
@@ -204,6 +244,36 @@ class History_pasienController extends Controller
 					Yii::app()->db->createCommand("update tbl_barang set stok=stok-".$m_obat->jumlah." where id_barang='".$m_obat->id_obat."'")->execute();
 				}	
 
+				//delete perawatan
+				$this->loadModelDeletePerawatan($id);
+				//save perawatan
+				$model_perawatan = json_decode($_POST['MasterTransaksi']['perawatan'],true);
+
+				for($a = 0; $a<count($model_perawatan); $a++){
+					$m_perawatan = new TransaksiPerawatan;
+					$m_perawatan->id_master_transaksi 	= $model->id_master_transaksi;
+					$m_perawatan->id_perawatan 			= $model_perawatan[$a]['id'];
+					$m_perawatan->created_at 			= date('Y-m-d H:i:s');
+
+					$m_perawatan->save();
+
+					$model_obat_perawatan = $model_perawatan[$a]['obat'];
+
+					for($b = 0; $b<count($model_obat_perawatan); $b++){
+						$m_obat_perawatan = new TransaksiObatDalam;
+						$m_obat_perawatan->id_transaksi_perawatan 	= $m_perawatan->id_transaksi_perawatan;
+						$m_obat_perawatan->id_obat 					= $model_obat_perawatan[$b]['id_obat'];
+						$m_obat_perawatan->jumlah 					= $model_obat_perawatan[$b]['jumlah'];
+						$m_obat_perawatan->created_at 				= date('Y-m-d H:i:s');
+
+						$m_obat_perawatan->save();
+					
+						//update stok barang
+						Yii::app()->db->createCommand("update tbl_barang_dalam set stok=stok-".$m_obat_perawatan->jumlah." where id_barang_dalam='".$m_obat_perawatan->id_obat."'")->execute();
+
+					}
+				}
+
 				$this->redirect(array('view','id'=>$model->id_master_transaksi));
 			}
 		}
@@ -235,11 +305,54 @@ class History_pasienController extends Controller
 			array_push($arr_obat, $d);
 		}
 
+		$m_perawatan = $this->loadModelDetailPerawatan($id);
+		$arr_perawatan = array();
+
+		$member = $model->Pasien->member;
+
+		$diskon = 0;
+
+		foreach($m_perawatan as $mp){
+
+			$perawatan=Perawatan::model()->findByPk($mp->id_perawatan);
+
+			if($member === 'Ya'){
+				$diskon = $perawatan->diskon_umum;
+			}
+			else{
+				if($perawatan->diskon_umum > $perawatan->diskon_member){
+					$diskon = $perawatan->diskon_umum;
+				}
+				else{
+					$diskon = $perawatan->diskon_member;
+				}
+			}
+
+			$d['id'] 				= $mp->id_perawatan;
+			$d['diskon'] 			= $diskon;
+			$d['harga'] 			= ($perawatan->harga - ($perawatan->harga/100*$diskon));
+			$d['komisi_dokter'] 	= $mp->Perawatan->komisi_dokter;
+			$d['komisi_perawat'] 	= $mp->Perawatan->komisi_perawat;
+			$d['obat']				= array();
+
+			$criteria = new CDbCriteria();
+			$criteria->condition = "id_transaksi_perawatan = '".$mp->id_transaksi_perawatan."'";
+			$m_obat_perawatan=TransaksiObatDalam::model()->findAll($criteria);
+			foreach ($m_obat_perawatan as $key => $op) {
+				$d_op['id_obat'] = $op->id_obat;
+				$d_op['jumlah'] = $op->jumlah;
+				$d_op['harga'] = ($op->BarangDalam->harga_jual-($op->BarangDalam->harga_jual*$op->BarangDalam->diskon/100))*$op->jumlah;
+
+				array_push($d['obat'], $d_op);
+			}
+
+			array_push($arr_perawatan, $d);
+		}
+
 		$fetch_detail['biaya'] = $model->biaya;
 		$fetch_detail['hutang'] = $model->hutang;
 		$fetch_detail['total'] = $model->total;
 		$fetch_detail['total_bayar'] = $model->total_bayar;
-		$fetch_detail['id_perawatan'] = $model->id_perawatan;
 		$fetch_detail['id_pasien'] = $model->id_pasien;
 
 		$this->render('update',array(
@@ -247,6 +360,7 @@ class History_pasienController extends Controller
 			'arr_dokter'=>$arr_dokter,
 			'arr_perawat'=>$arr_perawat,
 			'arr_obat'=>$arr_obat,
+			'arr_perawatan'=>$arr_perawatan,
 			'm_array'=>$fetch_detail,
 		));
 	}
@@ -277,6 +391,19 @@ class History_pasienController extends Controller
 
 		$this->render('admin',array(
 			'model'=>$model,
+		));
+	}
+
+	public function actionBy_pasien($id)
+	{
+		$model=new MasterTransaksi('search_pasien');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['MasterTransaksi']))
+			$model->attributes=$_GET['MasterTransaksi'];
+
+		$this->render('pasien',array(
+			'model'=>$model,
+			'id'=>$id,
 		));
 	}
 
@@ -340,6 +467,26 @@ class History_pasienController extends Controller
 		return $model;
 	}
 
+	public function loadModelDetailPerawatan($id)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->condition = "id_master_transaksi = '".$id."'";
+		$model=TransaksiPerawatan::model()->findAll($criteria);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelObatDalam($id)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->condition = "id_transaksi_perawatan = '".$id."'";
+		$model=TransaksiObatDalam::model()->findAll($criteria);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
 	public function loadModelDeleteDokter($id)
 	{
 		$model = $this->loadModelDetailDokter($id);
@@ -371,6 +518,26 @@ class History_pasienController extends Controller
 		return;
 	}
 
+	public function loadModelDeletePerawatan($id)
+	{
+		$model = $this->loadModelDetailPerawatan($id);
+		foreach($model as $md){
+			$m_transaksi_perawatan = TransaksiPerawatan::model()->findByPk($md->id_transaksi_perawatan);
+
+			$m_obat_dalam = $this->loadModelObatDalam($md->id_transaksi_perawatan);
+
+			foreach ($m_obat_dalam as $key => $od) {
+				$m_transaksi_obat_perawatan = TransaksiObatDalam::model()->findByPk($od->id_transaksi_obat_dalam);
+				$this->updateObatDalamBeforeDelete($m_transaksi_obat_perawatan->id_obat, $m_transaksi_obat_perawatan->jumlah);
+				$m_transaksi_obat_perawatan->delete();
+			}
+
+			$m_transaksi_perawatan->delete();
+			
+		}
+		return;
+	}
+
 	public function updateObatBeforeDelete($id, $stok)
 	{
 		$model = $this->loadModelBarang($id);
@@ -379,9 +546,23 @@ class History_pasienController extends Controller
 		return;
 	}
 
+	public function updateObatDalamBeforeDelete($id, $stok)
+	{
+		$model = $this->loadModelBarangDalam($id);
+		$model->stok = $model->stok+$stok;
+		$model->save();
+		return;
+	}
+
 	public function loadModelBarang($id)
 	{
 		$model=Barang::model()->findByPk($id);
+		return $model;
+	}
+
+	public function loadModelBarangDalam($id)
+	{
+		$model=BarangDalam::model()->findByPk($id);
 		return $model;
 	}
 

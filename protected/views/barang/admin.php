@@ -3,13 +3,13 @@
 /* @var $model Barang */
 
 $this->breadcrumbs=array(
-	'Barang'=>array('index'),
+	'Barang Jual'=>array('index'),
 	'Manage',
 );
 
 $this->menu=array(
-	array('label'=>'Data Barang', 'url'=>array('index')),
-	array('label'=>'Tambah Barang', 'url'=>array('create')),
+	array('label'=>'Data Barang Jual', 'url'=>array('index')),
+	array('label'=>'Tambah Barang Jual', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -26,7 +26,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h3>Data Barang</h3>
+<h3>Data Barang Jual</h3>
 
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
