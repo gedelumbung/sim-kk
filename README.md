@@ -1,4 +1,4 @@
-sim-kk
+Sistem Informasi Klinik Kecantikan - Yii & AngularJS
 ======
 
-sim-kk
+Aplikasi sederhana manajemen aplikasi kecantikan dengan menggunakan Yii Framework dan AngularJS Framework
