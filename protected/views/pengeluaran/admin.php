@@ -1,15 +1,15 @@
 <?php
-/* @var $this Barang_dalamController */
-/* @var $model BarangDalam */
+/* @var $this PengeluaranController */
+/* @var $model Pengeluaran */
 
 $this->breadcrumbs=array(
-	'Barang Dalam'=>array('index'),
+	'Pengeluaran'=>array('index'),
 	'Manage',
 );
 
 $this->menu=array(
-	array('label'=>'Data Barang Dalam', 'url'=>array('index')),
-	array('label'=>'Tambah Barang Dalam', 'url'=>array('create')),
+	array('label'=>'Data Pengeluaran', 'url'=>array('index')),
+	array('label'=>'Tambah Pengeluaran', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -18,7 +18,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-	$('#barang-dalam-grid').yiiGridView('update', {
+	$('#pengeluaran-grid').yiiGridView('update', {
 		data: $(this).serialize()
 	});
 	return false;
@@ -26,7 +26,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h3>Data Barang Dalam</h3>
+<h3>Data Pengeluaran</h3>
 
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
@@ -42,7 +42,7 @@ $('.search-form form').submit(function(){
 <div class="portlet-content">
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'barang-dalam-grid',
+	'id'=>'pengeluaran-grid',
 	'itemsCssClass'=>'table table-hover table-striped table-bordered table-condensed',
 	'dataProvider'=>$model->search(),
    'template'=>'{items}{pager}<br>{summary}',
@@ -52,16 +52,10 @@ $('.search-form form').submit(function(){
 	      'type'=>'raw',
 	      'value'=>'$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 	      ),
-		'nama_barang',
-		'stok',
-		'harga_pokok',
-		'harga_jual',
-		'diskon',
-		'keuntungan',
-		/*
+		'pengeluaran',
+		'jumlah',
+		'total',
 		'created_at',
-		'updated_at',
-		*/
 		array(
 			'class'=>'CButtonColumn',
 		),

@@ -14,4 +14,4 @@ $this->menu=array(
 
 <h3>Create Perawatan</h3>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'arr_obat' => $arr_obat)); ?>

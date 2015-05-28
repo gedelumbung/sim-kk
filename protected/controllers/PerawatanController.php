@@ -75,7 +75,7 @@ class PerawatanController extends Controller
 
 		$member = Yii::app()->request->getParam('member');
 
-		if($member === 'true'){
+		if($member === 'false'){
 			$data['diskon'] = $model->diskon_umum;
 		}
 		else{
@@ -91,6 +91,20 @@ class PerawatanController extends Controller
 		$data['harga'] = $model->harga - ($model->harga/100*$data['diskon']);
 		$data['komisi_dokter'] = $model->komisi_dokter;
 		$data['komisi_perawat'] = $model->komisi_perawat;
+
+		$m_obat = $this->loadModelDetailObat($id);
+		$arr_obat= array();
+		foreach($m_obat as $mo){
+			$d['id_obat'] = $mo->id_obat;
+			$d['nama_barang'] = $mo->BarangDalam->nama_barang;
+			$d['harga'] = ($mo->BarangDalam->harga_jual - (($mo->BarangDalam->harga_jual*$mo->BarangDalam->diskon)/100))*$mo->jumlah;
+			$d['diskon'] = $mo->BarangDalam->diskon.'%';
+			$d['jumlah'] = $mo->jumlah;
+
+			array_push($arr_obat, $d);
+		}
+
+		$data['obat'] = $arr_obat;
 
 		echo json_encode($data,true);
 	}
@@ -108,7 +122,7 @@ class PerawatanController extends Controller
 		$model=new Perawatan;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Perawatan']))
 		{
@@ -116,11 +130,29 @@ class PerawatanController extends Controller
 			$model->created_at = date('Y-m-d H:i:s');
 			$model->updated_at = date('Y-m-d H:i:s');
 			if($model->save())
+			{
+				//save obat
+				$model_obat = json_decode($_POST['Perawatan']['obat'],true);
+
+				for($a = 0; $a<count($model_obat); $a++){
+					$m_obat = new ObatPerawatan;
+					$m_obat->id_perawatan 			= $model->id_perawatan;
+					$m_obat->id_obat 				= $model_obat[$a]['id_obat'];
+					$m_obat->jumlah 				= $model_obat[$a]['jumlah'];
+					$m_obat->created_at 			= date('Y-m-d H:i:s');
+
+					$m_obat->save();
+
+					//update stok barang
+					Yii::app()->db->createCommand("update tbl_barang_dalam set stok=stok-".$m_obat->jumlah." where id_barang_dalam='".$m_obat->id_obat."'")->execute();
+				}	
 				$this->redirect(array('view','id'=>$model->id_perawatan));
+			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'arr_obat' => array()
 		));
 	}
 
@@ -137,19 +169,51 @@ class PerawatanController extends Controller
 		}
 		$model=$this->loadModel($id);
 
+		$m_obat = $this->loadModelDetailObat($id);
+		$arr_obat= array();
+		foreach($m_obat as $mo){
+			$d['id_obat'] = $mo->id_obat;
+			$d['harga'] = $mo->BarangDalam->harga_jual - (($mo->BarangDalam->harga_jual*$mo->BarangDalam->diskon)/100);
+			$d['diskon'] = $mo->BarangDalam->diskon.'%';
+			$d['jumlah'] = $mo->jumlah;
+
+			array_push($arr_obat, $d);
+		}
+
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Perawatan']))
 		{
 			$model->attributes=$_POST['Perawatan'];
 			$model->updated_at = date('Y-m-d H:i:s');
-			if($model->save())
+			if($model->save()){
+
+				//delete obat
+				$this->loadModelDeleteObat($id);
+				//save obat
+				$model_obat = json_decode($_POST['Perawatan']['obat'],true);
+
+				for($a = 0; $a<count($model_obat); $a++){
+					$m_obat = new ObatPerawatan;
+					$m_obat->id_perawatan 			= $model->id_perawatan;
+					$m_obat->id_obat 				= $model_obat[$a]['id_obat'];
+					$m_obat->jumlah 				= $model_obat[$a]['jumlah'];
+					$m_obat->created_at 			= date('Y-m-d H:i:s');
+
+					$m_obat->save();
+
+					//update stok barang
+					Yii::app()->db->createCommand("update tbl_barang set stok=stok-".$m_obat->jumlah." where id_barang='".$m_obat->id_obat."'")->execute();
+				}	
+
 				$this->redirect(array('view','id'=>$model->id_perawatan));
+			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'arr_obat' => $arr_obat
 		));
 	}
 
@@ -164,6 +228,7 @@ class PerawatanController extends Controller
 		{
 			$this->redirect(array("dashboard/index"));
 		}
+		$this->loadModelDeleteObat($id);
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -221,6 +286,53 @@ class PerawatanController extends Controller
 		$model=Perawatan::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelObat($id)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->condition = "id_perawatan = '".$id."'";
+		$model=ObatPerawatan::model()->findAll($criteria);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelDetailObat($id)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->condition = "id_perawatan = '".$id."'";
+		$model=ObatPerawatan::model()->findAll($criteria);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelDeleteObat($id)
+	{
+		$model = $this->loadModelDetailObat($id);
+		foreach($model as $md){
+			$m_transaksi_obat = ObatPerawatan::model()->findByPk($md->id_obat_perawatan);
+
+			$this->updateObatBeforeDelete($md->id_obat, $md->jumlah);
+
+			$m_transaksi_obat->delete();
+		}
+		return;
+	}
+
+	public function updateObatBeforeDelete($id, $stok)
+	{
+		$model = $this->loadModelBarang($id);
+		$model->stok = $model->stok+$stok;
+		$model->save();
+		return;
+	}
+
+	public function loadModelBarang($id)
+	{
+		$model=BarangDalam::model()->findByPk($id);
 		return $model;
 	}
 

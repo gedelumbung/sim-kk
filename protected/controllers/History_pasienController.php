@@ -153,21 +153,6 @@ class History_pasienController extends Controller
 
 					$m_perawatan->save();
 
-					$model_obat_perawatan = $model_perawatan[$a]['obat'];
-
-					for($b = 0; $b<count($model_obat_perawatan); $b++){
-						$m_obat_perawatan = new TransaksiObatDalam;
-						$m_obat_perawatan->id_transaksi_perawatan 	= $m_perawatan->id_transaksi_perawatan;
-						$m_obat_perawatan->id_obat 					= $model_obat_perawatan[$b]['id_obat'];
-						$m_obat_perawatan->jumlah 					= $model_obat_perawatan[$b]['jumlah'];
-						$m_obat_perawatan->created_at 				= date('Y-m-d H:i:s');
-
-						$m_obat_perawatan->save();
-					
-						//update stok barang
-						Yii::app()->db->createCommand("update tbl_barang_dalam set stok=stok-".$m_obat_perawatan->jumlah." where id_barang_dalam='".$m_obat_perawatan->id_obat."'")->execute();
-
-					}
 				}	
 
 				$this->redirect(array('view','id'=>$model->id_master_transaksi));
@@ -316,7 +301,7 @@ class History_pasienController extends Controller
 
 			$perawatan=Perawatan::model()->findByPk($mp->id_perawatan);
 
-			if($member === 'Ya'){
+			if($member === 'Tidak'){
 				$diskon = $perawatan->diskon_umum;
 			}
 			else{
@@ -336,11 +321,12 @@ class History_pasienController extends Controller
 			$d['obat']				= array();
 
 			$criteria = new CDbCriteria();
-			$criteria->condition = "id_transaksi_perawatan = '".$mp->id_transaksi_perawatan."'";
-			$m_obat_perawatan=TransaksiObatDalam::model()->findAll($criteria);
+			$criteria->condition = "id_perawatan = '".$mp->id_perawatan."'";
+			$m_obat_perawatan=ObatPerawatan::model()->findAll($criteria);
 			foreach ($m_obat_perawatan as $key => $op) {
 				$d_op['id_obat'] = $op->id_obat;
 				$d_op['jumlah'] = $op->jumlah;
+				$d_op['nama_barang'] = $op->BarangDalam->nama_barang;
 				$d_op['harga'] = ($op->BarangDalam->harga_jual-($op->BarangDalam->harga_jual*$op->BarangDalam->diskon/100))*$op->jumlah;
 
 				array_push($d['obat'], $d_op);

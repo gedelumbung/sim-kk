@@ -316,6 +316,7 @@ div.grid-view {
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/angular.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/module.angular.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/master.transaksi.js"></script>
+	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/perawatan.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/barang.service.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/barang.dalam.service.js"></script>
 	<script src="<?php echo Yii::app()->theme->baseUrl; ?>/asset/js/custom/service/perawatan.service.js"></script>
@@ -435,11 +436,29 @@ div.grid-view {
 				?>
 
 				<?php 
+					if(Yii::app()->user->status === 'admin' || Yii::app()->user->status === 'owner'){
+				?>
+				<li class='active'>
+					<a href="#"><i class="icon-briefcase icon-white"></i><span>Pengeluaran</span><span class="label">2</span></a>
+					<ul class="subnav">
+						<li>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/pengeluaran"><i class="icon-th icon-white"></i><span> Pengeluaran</span></a>
+						</li>
+					</ul>
+				</li>
+				<?php
+					}
+				?>
+
+				<?php 
 					if(Yii::app()->user->status === 'owner'){
 				?>
 				<li class='active'>
 					<a href="#"><i class="icon-th icon-white"></i><span>Laporan</span><span class="label">4</span></a>
 					<ul class="subnav">
+						<li>
+							<a href="<?php echo Yii::app()->baseUrl; ?>/laporan_harian"><i class="icon-th-list icon-white"></i><span> Laporan Harian</span></a>
+						</li>
 						<li>
 							<a href="<?php echo Yii::app()->baseUrl; ?>/laporan_mingguan"><i class="icon-th-list icon-white"></i><span> Laporan Mingguan</span></a>
 						</li>

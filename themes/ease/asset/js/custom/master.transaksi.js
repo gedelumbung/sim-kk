@@ -16,6 +16,8 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanSer
 
         $scope.statusPembayaran = 'Belum Lunas';
 
+        $scope.totalBiayaObatPerawatan = 0;
+
 
         $scope.countTotalBiayaObat = function(){
             $scope.totalBiayaObat = 0;
@@ -28,9 +30,9 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanSer
             $scope.totalBiayaObatPerawatan = 0;
             for(var i=0; i<$scope.perawatanCollection.length; i++){
                 $scope.totalBiayaObatPerawatan = parseInt(parseInt($scope.totalBiayaObatPerawatan)+parseInt($scope.perawatanCollection[i].harga));
-                for(var j=0; j<$scope.perawatanCollection[i].obat.length; j++){
-                    $scope.totalBiayaObatPerawatan = parseInt(parseInt($scope.totalBiayaObatPerawatan)+parseInt($scope.perawatanCollection[i].obat[j].harga));
-                }
+                /*for(var j=0; j<$scope.perawatanCollection[i].obat.length; j++){
+                    $scope.totalBiayaObatPerawatan = parseInt(parseInt($scope.totalBiayaObatPerawatan)-parseInt($scope.perawatanCollection[i].obat[j].harga));
+                }*/
             }
         };
 
@@ -100,11 +102,7 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanSer
             $scope.entityObatPerawatan = '';
             $barangDalamService.getEntity(id_obat).then(function(response) {
                 $scope.entityObatPerawatan = response.data;
-                $scope.perawatanCollection[indexPerawatan].obat[index] = {
-                    id_obat : $scope.entityObatPerawatan.id_barang_dalam,
-                    harga : $scope.entityObatPerawatan.harga_jual*jumlah,
-                    jumlah : jumlah
-                };
+                $scope.perawatanCollection[indexPerawatan].obat[index] = response.data.obat;
                 $scope.countTotalBiayaObat();
                 $scope.countTotalBiayaObatPerawatan();
                 $scope.countTotal();
@@ -117,11 +115,7 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanSer
                 diskon : 0,
                 komisi_dokter : 0,
                 komisi_perawat : 0,
-                obat : [{
-                    id_obat : '',
-                    harga : 0,
-                    jumlah : 1,
-                }]
+                obat : []
             });
             $scope.countTotalBiayaObat();
             $scope.countTotalBiayaObatPerawatan();
@@ -142,11 +136,7 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanSer
         $scope.updatePerawatan = function(id_perawatan, member, index){
             $perawatanService.getEntity(id_perawatan, $scope.queryStrPasien).then(function(response) {
                 $scope.perawatanCollection[index] = response.data;
-                $scope.perawatanCollection[index].obat = [{
-                    id_obat : '',
-                    harga : 0,
-                    jumlah : 1,
-                }];
+                $scope.perawatanCollection[index].obat = response.data.obat;
                 $scope.countTotalBiayaObat();
                 $scope.countTotalBiayaObatPerawatan();
                 $scope.countTotal();
@@ -190,7 +180,7 @@ app.controller('TransasksiCtrl', ['$scope','$http','barangService','perawatanSer
                 $scope.totalKembalian = 0;
             }
 
-            if($scope.totalHutang < 0){
+            if($scope.totalHutang <= 0){
                 $scope.totalHutang = 0;
                 $scope.statusPembayaran = 'Lunas';
             }
@@ -226,6 +216,8 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService','perawata
         $scope.perawatanCollection = arr_perawatan;
         $scope.perawatan = '';
 
+        $scope.totalBiayaObatPerawatan = 0;
+
 
         $scope.countTotalBiayaObat = function(){
             $scope.totalBiayaObat = 0;
@@ -238,9 +230,9 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService','perawata
             $scope.totalBiayaObatPerawatan = 0;
             for(var i=0; i<$scope.perawatanCollection.length; i++){
                 $scope.totalBiayaObatPerawatan = parseInt(parseInt($scope.totalBiayaObatPerawatan)+parseInt($scope.perawatanCollection[i].harga));
-                for(var j=0; j<$scope.perawatanCollection[i].obat.length; j++){
+                /*for(var j=0; j<$scope.perawatanCollection[i].obat.length; j++){
                     $scope.totalBiayaObatPerawatan = parseInt(parseInt($scope.totalBiayaObatPerawatan)+parseInt($scope.perawatanCollection[i].obat[j].harga));
-                }
+                }*/
             }
         };
 
@@ -352,11 +344,7 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService','perawata
         $scope.updatePerawatan = function(id_perawatan, member, index){
             $perawatanService.getEntity(id_perawatan, $scope.queryStrPasien).then(function(response) {
                 $scope.perawatanCollection[index] = response.data;
-                $scope.perawatanCollection[index].obat = [{
-                    id_obat : '',
-                    harga : 0,
-                    jumlah : 1,
-                }];
+                $scope.perawatanCollection[index].obat = response.data.obat;
                 $scope.countTotalBiayaObat();
                 $scope.countTotalBiayaObatPerawatan();
                 $scope.countTotal();
@@ -400,7 +388,7 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService','perawata
                 $scope.totalKembalian = 0;
             }
 
-            if($scope.totalHutang < 0){
+            if($scope.totalHutang <= 0){
                 $scope.totalHutang = 0;
                 $scope.statusPembayaran = 'Lunas';
             }
@@ -408,6 +396,8 @@ app.controller('TransasksiEditCtrl', ['$scope','$http','barangService','perawata
                 $scope.statusPembayaran = 'Belum Lunas';
             }
         };
+
+        $scope.id_pasien = m_array.id_pasien;
 
         $scope.countTotalBiayaObat();
         $scope.countTotalBiayaObatPerawatan();

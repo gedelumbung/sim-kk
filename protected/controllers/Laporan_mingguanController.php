@@ -34,7 +34,7 @@ class Laporan_mingguanController extends Controller
 			
 			$perawat = Yii::app()->db->createCommand('SELECT count(a.id_master_transaksi) as jum_perawat FROM tbl_transaksi_perawat a where id_master_transaksi="'.$g['id_master_transaksi'].'"')->queryAll();
 			
-			$perawatan = Yii::app()->db->createCommand('SELECT b.komisi_dokter, b.komisi_perawat, a.id_transaksi_perawatan FROM tbl_transaksi_perawatan a left join tbl_perawatan b on a.id_perawatan = b.id_perawatan where id_master_transaksi="'.$g['id_master_transaksi'].'"')->queryAll();
+			$perawatan = Yii::app()->db->createCommand('SELECT b.komisi_dokter, b.komisi_perawat, a.id_perawatan FROM tbl_transaksi_perawatan a left join tbl_perawatan b on a.id_perawatan = b.id_perawatan where id_master_transaksi="'.$g['id_master_transaksi'].'"')->queryAll();
 
 			$komisi_dokter = 0;
 			$komisi_perawat = 0;
@@ -45,17 +45,11 @@ class Laporan_mingguanController extends Controller
 				$komisi_dokter = $komisi_dokter+$p['komisi_dokter'];
 				$komisi_perawat = $komisi_perawat+$p['komisi_perawat'];
 			
-				$obat_dalam = Yii::app()->db->createCommand('select y.keuntungan*x.jumlah as total_keuntungan, y.harga_jual*x.jumlah as total_jual_obat, y.harga_pokok*x.jumlah as total_pokok_obat  from tbl_transaksi_obat_dalam x left join tbl_barang_dalam y on x.id_obat=y.id_barang_dalam where x.id_transaksi_perawatan="'.$p['id_transaksi_perawatan'].'"')->queryAll();
-				
-				$total_pokok_obat = 0;
-				$total_jual_obat = 0;
+				$obat_dalam = Yii::app()->db->createCommand('select y.keuntungan*x.jumlah as total_keuntungan, y.harga_jual*x.jumlah as total_jual_obat, y.harga_pokok*x.jumlah as total_pokok_obat  from tbl_obat_perawatan x left join tbl_barang_dalam y on x.id_obat=y.id_barang_dalam where x.id_perawatan="'.$p['id_perawatan'].'"')->queryAll();
 
 				foreach ($obat_dalam as $key => $od) {
-					$total_pokok_obat = $total_pokok_obat+$od['total_pokok_obat'];
-					$total_jual_obat = $total_jual_obat+$od['total_jual_obat'];
+					$biaya_obat_dalam = $biaya_obat_dalam+$od['total_pokok_obat'];
 				}
-
-				$biaya_obat_dalam += $biaya_obat_dalam+($total_jual_obat-$total_pokok_obat);
 			}
 			
 			$obat = Yii::app()->db->createCommand('select y.keuntungan*x.jumlah as total_keuntungan, y.harga_jual*x.jumlah as total_jual_obat, y.harga_pokok*x.jumlah as total_pokok_obat  from tbl_transaksi_obat x left join tbl_barang y on x.id_obat=y.id_barang where x.id_master_transaksi="'.$g['id_master_transaksi'].'"')->queryAll();
@@ -106,7 +100,7 @@ class Laporan_mingguanController extends Controller
 
 		$n = 0;
 		foreach($data_summ as $key=>$val){
-			if($n%2===0){
+			if($n%2===1){
 				array_push($arr_penjualan, $val);
 			}
 			else{

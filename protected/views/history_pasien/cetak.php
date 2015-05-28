@@ -31,7 +31,6 @@ table{
 	'attributes'=>array(
 		'id_master_transaksi',
 		'Pasien.nama',
-		'keterangan',
 		'hutang',
 		'total',
 		'total_bayar',
@@ -101,8 +100,8 @@ table{
 			echo "<td>";
 
 			$criteria = new CDbCriteria();
-			$criteria->condition = "id_transaksi_perawatan = '".$o->id_transaksi_perawatan."'";
-			$m_obat_perawatan=TransaksiObatDalam::model()->findAll($criteria);
+			$criteria->condition = "id_perawatan = '".$o->id_perawatan."'";
+			$m_obat_perawatan=ObatPerawatan::model()->findAll($criteria);
 			?>
 			<table>
 			

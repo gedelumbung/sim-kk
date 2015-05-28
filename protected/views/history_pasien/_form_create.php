@@ -203,27 +203,11 @@
 						<table>
 							<tr ng-repeat="obatPerawatan in perawatan.obat">
 								<td>
-									<?php
-										$obat = BarangDalam::model()->findAll();
-									?>
-									<select ng-change="updateObatPerawatan(indexPerawatan,$index, obatPerawatan.id_obat, obatPerawatan.jumlah)" ng-model="obatPerawatan.id_obat">
-										
-										<?php
-											for($i = 0; $i<count($obat); $i++){
-												echo '<option value="'.$obat[$i]['id_barang_dalam'].'">'.$obat[$i]['nama_barang'].' - Rp. '.number_format($obat[$i]['harga_jual']-($obat[$i]['harga_jual']*$obat[$i]['diskon']/100),2,',','.').'</option>';
-											}
-										?>
-									</select>
+									{{obatPerawatan.nama_barang}} * {{obatPerawatan.jumlah}}
 								</td>
 								<td>
-									<input type="text" style="width:50%" ng-model="obatPerawatan.jumlah" ng-change="updateObatPerawatan(indexPerawatan,$index, obatPerawatan.id_obat, obatPerawatan.jumlah)">
+									{{obatPerawatan.harga}}
 								</td>
-								<td>
-									<span class="btn btn-small btn-warning pull-right" ng-click="deleteRowObatPerawatan(indexPerawatan,$index)">x</span>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3"><span class="btn btn-small btn-warning pull-right" ng-click="addRowObatPerawatan($index)">+ Tambah Obat</span></td>
 							</tr>
 						</table>
 					</td>
@@ -237,7 +221,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<input type="text" name="MasterTransaksi[perawatan]" value="{{perawatanCollection}}">
+		<input type="hidden" name="MasterTransaksi[perawatan]" value="{{perawatanCollection}}">
 	</div>
 
 	<br>

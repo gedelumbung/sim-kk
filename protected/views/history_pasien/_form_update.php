@@ -30,6 +30,7 @@
 			   'name' => 'MasterTransaksi[id_pasien]', // input name
 			   'value' => $model->id_pasien, // selection
 			   'data' => array(''=>'Semua') + CHtml::listData(Pasien::model()->findAll(),'id_pasien','nama'),
+			   'htmlOptions' => array('ng-change' => 'updatePasien(id_pasien)', 'ng-model' => 'id_pasien')
 			));
 		?>
 		<?php echo $form->error($model,'id_pasien'); ?>
@@ -199,27 +200,11 @@
 						<table>
 							<tr ng-repeat="obatPerawatan in perawatan.obat">
 								<td>
-									<?php
-										$obat = BarangDalam::model()->findAll();
-									?>
-									<select ng-change="updateObatPerawatan(indexPerawatan,$index, obatPerawatan.id_obat, obatPerawatan.jumlah)" ng-model="obatPerawatan.id_obat">
-										
-										<?php
-											for($i = 0; $i<count($obat); $i++){
-												echo '<option value="'.$obat[$i]['id_barang_dalam'].'">'.$obat[$i]['nama_barang'].' - Rp. '.number_format($obat[$i]['harga_jual']-($obat[$i]['harga_jual']*$obat[$i]['diskon']/100),2,',','.').'</option>';
-											}
-										?>
-									</select>
+									{{obatPerawatan.nama_barang}} * {{obatPerawatan.jumlah}}
 								</td>
 								<td>
-									<input type="text" style="width:50%" ng-model="obatPerawatan.jumlah" ng-change="updateObatPerawatan(indexPerawatan,$index, obatPerawatan.id_obat, obatPerawatan.jumlah)">
+									{{obatPerawatan.harga}}
 								</td>
-								<td>
-									<span class="btn btn-small btn-warning pull-right" ng-click="deleteRowObatPerawatan(indexPerawatan,$index)">x</span>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3"><span class="btn btn-small btn-warning pull-right" ng-click="addRowObatPerawatan($index)">+ Tambah Obat</span></td>
 							</tr>
 						</table>
 					</td>
@@ -239,21 +224,27 @@
 	<br>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'total'); ?>
-		<?php echo $form->textField($model,'total', array('class'=>'input-block-level', 'readonly'=>true, 'ng-model'=>'totalBiaya')); ?>
-		<?php echo $form->error($model,'total'); ?>
-	</div>
-
-	<div class="row">
+		<div class="span6">
+			<?php echo $form->labelEx($model,'total'); ?>
+			<?php echo $form->textField($model,'total', array('class'=>'input-block-level', 'readonly'=>true, 'ng-model'=>'totalBiaya')); ?>
+			<?php echo $form->error($model,'total'); ?>
+		</div>
 		<div class="span6">
 			<?php echo $form->labelEx($model,'total_bayar'); ?>
 			<?php echo $form->textField($model,'total_bayar', array('class'=>'input-block-level', 'ng-model'=>'totalBayar', 'ng-change'=>'countHutang()')); ?>
 			<?php echo $form->error($model,'total_bayar'); ?>
 		</div>
+	</div>
+
+	<div class="row">
 		<div class="span6">
 			<?php echo $form->labelEx($model,'hutang'); ?>
 			<?php echo $form->textField($model,'hutang', array('class'=>'input-block-level', 'readonly'=>true, 'ng-model'=>'totalHutang')); ?>
 			<?php echo $form->error($model,'hutang'); ?>
+		</div>
+		<div class="span6">
+			<label for="kembalian">Kembalian</label>
+			<input type="text" ng-model="totalKembalian" readonly="true">
 		</div>
 	</div>
 

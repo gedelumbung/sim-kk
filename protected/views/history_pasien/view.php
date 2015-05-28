@@ -32,7 +32,6 @@ $this->menu=array(
 		'Pasien.nama',
 		'created_at',
 		'updated_at',
-		'keterangan',
 		'hutang',
 		'total',
 		'total_bayar',
@@ -140,8 +139,8 @@ $this->menu=array(
 			echo "<td>";
 
 			$criteria = new CDbCriteria();
-			$criteria->condition = "id_transaksi_perawatan = '".$o->id_transaksi_perawatan."'";
-			$m_obat_perawatan=TransaksiObatDalam::model()->findAll($criteria);
+			$criteria->condition = "id_perawatan = '".$o->id_perawatan."'";
+			$m_obat_perawatan=ObatPerawatan::model()->findAll($criteria);
 			?>
 			<table>
 				<tr ng-repeat="obatPerawatan in perawatan.obat">

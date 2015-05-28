@@ -17,4 +17,4 @@ $this->menu=array(
 
 <h3>Update Perawatan <?php echo $model->id_perawatan; ?></h3>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'arr_obat' => $arr_obat)); ?>
